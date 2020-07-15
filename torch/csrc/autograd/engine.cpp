@@ -8,6 +8,8 @@
 #include <torch/csrc/autograd/variable.h>
 #include <torch/csrc/utils/memory.h>
 
+#include "torch/csrc/db/g_common.h"
+
 #include <ATen/DeviceGuard.h>
 #include <ATen/ExpandUtils.h>
 #include <ATen/Parallel.h>
@@ -53,6 +55,7 @@ static void track_bad_autograd_forks() {
 #endif
 }
 }
+
 
 // Threads spawned by the engine are assigned a 'worker_device' specifying
 // what device they process work for. This variable is initialized at:

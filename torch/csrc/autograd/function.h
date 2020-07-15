@@ -333,6 +333,9 @@ struct TORCH_API Node : std::enable_shared_from_this<Node> {
 
   static uint64_t peek_at_next_sequence_nr();
 
+  //xxx
+  std::vector<SavedVariable *> saved_variables;
+
  protected:
   static uint64_t& get_next_sequence_nr();
 
@@ -390,6 +393,10 @@ struct TORCH_API Node : std::enable_shared_from_this<Node> {
   std::vector<std::unique_ptr<FunctionPreHook>> pre_hooks_;
   std::vector<std::unique_ptr<FunctionPostHook>> post_hooks_;
   at::SmallVector<InputMetadata, 2> input_metadata_;
+  
+  
+
+
 };
 
 /// See Node::is_traceable() for definition.

@@ -1,4 +1,5 @@
 #include "torch/csrc/autograd/VariableTypeUtils.h"
+#include "torch/csrc/db/g_common.h"
 
 #include <ATen/TypeDefault.h>
 #include <torch/library.h>
@@ -28,6 +29,8 @@
 using namespace at;
 using namespace torch::autograd::generated;
 
+//torch::tensordb::TensorDatabase tensor_db(30);
+//int uni_id;
 namespace torch { namespace autograd {
 
 namespace VariableType {
@@ -39,6 +42,7 @@ namespace{
     }
   }
 }
+
 
 // Comment the anonymous namespace so that the generated functions
 // can be accessed from outside of the files (register_mobile_autograd.cpp).

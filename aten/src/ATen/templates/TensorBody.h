@@ -431,7 +431,10 @@ class CAFFE2_API Tensor {
   Tensor & index_put_(std::initializer_list<at::indexing::TensorIndex> indices, Scalar v);
 
   Tensor cpu() const;
+  Tensor non_block_cpu() const;
   Tensor cuda() const;
+  Tensor non_block_cuda() const;
+
   Tensor hip() const;
   Tensor vulkan() const;
 

@@ -32,6 +32,33 @@ class TORCH_API SavedVariable {
     return data_.reset();
   }
 
+  /// shixiong
+  void set_data(at::Tensor d){
+    data_=d;
+  }
+  
+  /// shixiong
+  at::Tensor & get_data(){
+    return data_;
+  }
+
+  void non_block_cpu(){
+    data_ = data_.non_block_cpu();
+  }
+
+  void cpu(){
+    data_ = data_.cpu();
+  }
+
+  void non_block_cuda(){
+    data_ = data_.non_block_cuda();
+  }
+
+  void cuda(){
+    data_ = data_.cuda();
+  }
+
+
   void reset_grad_function() {
     grad_fn_.reset();
   }

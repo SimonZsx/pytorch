@@ -242,7 +242,7 @@ add_custom_command(
     "${TORCH_SRC_DIR}/_C/__init__.pyi.in"
     "${TORCH_SRC_DIR}/_C/_VariableFunctions.pyi.in"
     "${TORCH_SRC_DIR}/nn/functional.pyi.in"
-    "${TOOLS_PATH}/pyi/gen_pyi.py"
+    #"${TOOLS_PATH}/pyi/gen_pyi.py"
     WORKING_DIRECTORY
     "${TORCH_ROOT}"
 )

@@ -1,12 +1,12 @@
 
 ### Build with Dockerfile
 
-```docker build . -t pytorch:1.4.0```
+```docker build . -t pytorch:1.5.0```
 
 
 ### Excute 
 
-```docker run -it pytorch:1.4.0 /bin/bash```
+```docker run -it pytorch:1.5.0 /bin/bash```
 
 
 ### Setup miniconda 3
@@ -66,6 +66,8 @@ apt install g++-7 -y
 ```pip uninstall torch```
 
 #### setup develop
+export DEBUG=1 REL_WITH_DEB_INFO=1 BUILD_TEST=0 BUILD_CAFFE2_OPS=0
+
 export TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1 7.0+PTX" 
 export TORCH_NVCC_FLAGS="-Xfatbin -compress-all" 
 export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}

@@ -12,6 +12,8 @@
 #include <memory>
 #include <vector>
 
+#include <iostream>
+
 namespace torch { namespace autograd {
 
 using function_constructor = std::function<std::shared_ptr<Node>(edge_list&&)>;

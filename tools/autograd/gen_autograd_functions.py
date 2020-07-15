@@ -22,6 +22,7 @@ struct TORCH_API ${op} : public ${superclass} {
   ${will_release_variables}
   ${saved_variables}
   ${saved_list_sizes}
+
 };
 """)
 
@@ -149,6 +150,7 @@ def process_function(func):
             release_variables.append('{}_.reset_grad_function();'.format(name))
             ptr = 'shared_from_this()' if is_output else ''
             unpack.append('auto {} = {}_.unpack({});'.format(name, name, ptr))
+            unpack.append('if(!{}.is_cuda()){{ std::cout<<"{} swap to cuda"<<std::endl; {} = {}.cuda(); }}'.format(name, name, name, name))
         elif arg['type'] == 'TensorList':
             saved_variables.append('std::vector<SavedVariable> {}_;'.format(name))
             saved_variables.append('bool {}_released_ = false;'.format(name))

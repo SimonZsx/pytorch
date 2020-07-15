@@ -20,6 +20,8 @@
 #endif
 #endif
 
+#include <iostream>
+
 namespace at {
 
 // This is temporary typedef to enable Quantizer in aten native function API
@@ -29,12 +31,23 @@ using ConstQuantizerPtr = const c10::intrusive_ptr<Quantizer>&;
 
 Tensor Tensor::cpu() const {
   return to(options().device(DeviceType::CPU), /*non_blocking*/ false, /*copy*/ false);
+
+}
+
+Tensor Tensor::non_block_cpu() const {
+  return to(options().device(DeviceType::CPU), /*non_blocking*/ true, /*copy*/ false);
 }
 
 // TODO: The Python version also accepts arguments
 Tensor Tensor::cuda() const {
   return to(options().device(DeviceType::CUDA), /*non_blocking*/ false, /*copy*/ false);
 }
+
+Tensor Tensor::non_block_cuda() const {
+  return to(options().device(DeviceType::CUDA), /*non_blocking*/ true, /*copy*/ false);
+}
+
+
 
 Tensor Tensor::hip() const {
   return to(options().device(DeviceType::HIP), /*non_blocking*/ false, /*copy*/ false);

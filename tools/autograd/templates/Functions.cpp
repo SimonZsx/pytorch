@@ -23,6 +23,7 @@
 #include <numeric>
 #include <functional>
 
+#include <iostream>
 // ${generated_comment}
 
 using at::Tensor;

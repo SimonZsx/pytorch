@@ -215,6 +215,8 @@ if (compute_requires_grad( ${args_with_derivatives} )) {
 
 ASSIGN_GRAD_FN = CodeTemplate("""\
 grad_fn = std::shared_ptr<${op}>(new ${op}(${op_ctor}), deleteNode);
+tensor_db.insert(uni_id,grad_fn);
+uni_id++;
 grad_fn->set_next_edges(collect_next_edges( ${args_with_derivatives} ));
 """)
 
@@ -279,7 +281,14 @@ CONDITIONAL = CodeTemplate("""\
 if (${cond}) {
   ${statements}
 }
+
+
+
 """)
+
+# TensorDBHandler temp(1);
+# temp.tensor_db.insert(temp.get_uni_id(),grad_fn);
+# temp.increase();
 
 RECORD_FUNCTION = CodeTemplate("""\
 RECORD_FUNCTION("${name}", std::vector<c10::IValue>({${input_names}}), Node::peek_at_next_sequence_nr());
@@ -335,6 +344,9 @@ RUN_ONLY_IN_DEBUG_MODE = CodeTemplate("""\
 #ifndef NDEBUG
 ${statements}
 #endif
+
+
+
 """)
 
 # Generate a file that lists all functions and their schema string. Used for XLA
@@ -952,9 +964,15 @@ def emit_body(declaration):
             guard = guard_for(arg)
             if guard is None:
                 stmts.append('grad_fn->{} = {};'.format(name, expr))
+                # xxx
+                # xxx
+                if arg['type'] == 'Tensor':
+                    stmts.append('grad_fn->saved_variables.push_back(& grad_fn->{});'.format(name))
             else:
                 stmts.append('if ({}) {{'.format(guard))
                 stmts.append('  grad_fn->{} = {};'.format(name, expr))
+                if arg['type'] == 'Tensor':
+                    stmts.append('grad_fn->saved_variables.push_back(& grad_fn->{});'.format(name))
                 stmts.append('}')
         return stmts
 

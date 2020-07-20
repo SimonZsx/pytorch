@@ -26,6 +26,19 @@
 #include <pthread.h>
 #endif
 
+
+//////////////////tensor db fields
+
+#include <torch/csrc/db/g_common.h>
+torch::tensordb::TensorDatabase tensor_db(30);
+int uni_id;
+
+#include <iostream>
+#include <string>
+
+
+/////////////////tensor db 
+
 using namespace torch;
 
 THCState *state = nullptr;
@@ -53,6 +66,20 @@ static void poison_fork() {
 ////////////////////////////////////////////////////////////////////////////////
 // CUDA management methods
 ////////////////////////////////////////////////////////////////////////////////
+
+PyObject * THCPModule_getTensordb(PyObject *self, PyObject *noargs)
+{
+  HANDLE_TH_ERRORS
+  //int device;
+  //THCudaCheck(cudaGetDevice(&device));
+  std::string s = tensor_db.get_tensormap();
+  const char * c = s.c_str();
+  //std::cout<<s;
+  return PyByteArray_FromStringAndSize(c, s.length());
+  //return Py_BuildValue("s", s, s.length());           
+  END_HANDLE_TH_ERRORS
+}
+
 
 void THCPModule_setDevice(int device)
 {
@@ -490,6 +517,7 @@ PyObject * THCPModule_getCurrentBlasHandle_wrap(PyObject *self, PyObject *noargs
 
 static struct PyMethodDef _THCPModule_methods[] = {
   {"_cuda_init",        (PyCFunction)THCPModule_initExtension,    METH_NOARGS,  nullptr},
+  {"_cuda_getTensordb", (PyCFunction)THCPModule_getTensordb, METH_NOARGS, nullptr},
   {"_cuda_setDevice",   (PyCFunction)THCPModule_setDevice_wrap,   METH_O,       nullptr},
   {"_cuda_getDevice",   (PyCFunction)THCPModule_getDevice_wrap,   METH_NOARGS,  nullptr},
   {"_cuda_getDeviceCount", (PyCFunction)THCPModule_getDeviceCount_wrap, METH_NOARGS, nullptr},

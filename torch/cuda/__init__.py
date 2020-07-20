@@ -55,6 +55,23 @@ def is_available() -> bool:
 def _sleep(cycles):
     torch._C._cuda_sleep(cycles)
 
+########################################
+#tenosr db apis
+########################################
+
+
+
+
+
+def get_tensor_db():
+    return torch._C._cuda_getTensordb()
+
+
+
+#######################################
+#tensor db ends
+#######################################
+
 
 def _check_driver():
     if not hasattr(torch._C, '_cuda_isDriverSufficient'):

@@ -826,6 +826,15 @@ PyObject* THPFunction_register_hook(THPFunction *self, PyObject *hook)
   END_HANDLE_TH_ERRORS
 }
 
+PyObject* THPFunction_register_pre_hook(THPFunction *self, PyObject *hook)
+{
+  HANDLE_TH_ERRORS
+  auto cdata = self->cdata.lock();
+  return torch::autograd::registerFunctionPreHook(*cdata, hook);
+  END_HANDLE_TH_ERRORS
+}
+
+
 static PyObject *unpack_saved_variables(
     THPFunction *self,
     const std::function<PyObject*(const Variable&)>& unpack_fn)

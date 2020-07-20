@@ -158,6 +158,26 @@ PyObject* THPCppFunction_name(PyObject* self, PyObject *noargs) {
   return THPUtils_packString(fn.name());
 }
 
+PyObject* THPCppFunction_register_pre_hook_dict(PyObject* self, PyObject* _var)
+{
+  if (!THPVariable_Check(_var)) {
+    return PyErr_Format(PyExc_TypeError, "_register_pre_hook_dict expected a variable");
+  }
+  auto var = (THPVariable*)_var;
+  auto& fn = *((THPCppFunction*)self)->cdata;
+  std::unique_ptr<FunctionPreHook> hook(
+      new PyFunctionPreHook(var->backward_pre_hooks, var->cdata.output_nr()));
+  fn.add_pre_hook(std::move(hook));
+  Py_RETURN_NONE;
+}
+
+PyObject* THPCppFunction_register_pre_hook(PyObject* self, PyObject* hook)
+{
+  auto& fn = *((THPCppFunction*)self)->cdata;
+  return registerFunctionPreHook(fn, hook);
+}
+
+
 static struct PyMethodDef default_methods[] = {
   THP_FUNCTION_DEFAULT_METHODS,
   {nullptr}
@@ -267,5 +287,36 @@ PyObject* registerFunctionHook(Node& fn, PyObject* hook)
   Py_INCREF(handle);
   return handle;
 }
+
+
+
+
+
+PyObject* registerFunctionPreHook(Node& fn, PyObject* hook)
+{
+  PyObject* dict = Py_None;
+  for (const auto& hook : fn.pre_hooks()) {
+    if (auto pyhook = dynamic_cast<PyFunctionPreHook*>(hook.get())) {
+      dict = pyhook->dict;
+      break;
+    }
+  }
+
+  THPObjectPtr register_fn(PyObject_GetAttrString(THPFunctionClass, "_register_pre_hook"));
+  if (!register_fn) return nullptr;
+  THPObjectPtr res(PyObject_CallFunctionObjArgs(register_fn.get(), dict, hook, nullptr));
+  if (!res) return nullptr;
+
+  if (dict == Py_None) {
+    dict = PyTuple_GET_ITEM(res.get(), 0);
+    std::unique_ptr<FunctionPreHook> hook(new PyFunctionPreHook(dict, 0));
+    fn.add_pre_hook(std::move(hook));
+  }
+
+  PyObject* handle = PyTuple_GET_ITEM(res.get(), 1);
+  Py_INCREF(handle);
+  return handle;
+}
+
 
 }} // namespace torch::autograd

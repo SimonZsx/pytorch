@@ -16,6 +16,8 @@ struct THPVariable {
     // Hooks to be run on backwards pass (corresponds to Python attr
     // '_backwards_hooks', set by 'register_hook')
     PyObject* backward_hooks = nullptr;
+    PyObject* backward_pre_hooks = nullptr;
+
 };
 
 THP_API PyObject *THPVariableClass;

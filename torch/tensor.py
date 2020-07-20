@@ -222,6 +222,22 @@ class Tensor(torch._C._TensorBase):
         self._backward_hooks[handle.id] = hook
         return handle
 
+    def register_pre_hook(self, hook):
+        r"""Registers a backward pre-hook.
+
+        The hook will be called every time a backward pass is invoked.
+        """
+        if not self.requires_grad:
+            raise RuntimeError("cannot register a pre_hook on a tensor that "
+                               "doesn't require gradient")
+        if self._backward_pre_hooks is None:
+            self._backward_pre_hooks = OrderedDict()
+            if self.grad_fn is not None:
+                self.grad_fn._register_pre_hook_dict(self)
+        handle = hooks.RemovableHandle(self._backward_pre_hooks)
+        self._backward_pre_hooks[handle.id] = hook
+        return handle
+
     def reinforce(self, reward):
         def trim(str):
             return '\n'.join([line.strip() for line in str.split('\n')])

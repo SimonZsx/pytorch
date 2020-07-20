@@ -70,6 +70,14 @@ class _HookMixin(object):
         backward_hooks[handle.id] = hook
         return backward_hooks, handle
 
+    @staticmethod
+    def _register_pre_hook(backward_pre_hooks, hook):
+        if backward_pre_hooks is None:
+            backward_pre_hooks = OrderedDict()
+        handle = hooks.RemovableHandle(backward_pre_hooks)
+        backward_pre_hooks[handle.id] = hook
+        return backward_pre_hooks, handle
+
 
 class BackwardCFunction(_C._FunctionBase, _ContextMethodMixin, _HookMixin):
     _is_legacy = False

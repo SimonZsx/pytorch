@@ -25,7 +25,7 @@
 ### Commit and save to image 
 
 
-```docker commit [container_id] pytorch:1.4.0-conda```
+```docker commit [container_id] pytorch:1.5.0-conda```
 
 
 ### Reboot a docker 
@@ -74,6 +74,11 @@ export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
 python setup.py develop
 
 
+#### remove git white space 
+
+git diff -U0 -w --no-color | git apply --cached --ignore-whitespace --unidiff-zero -
+
+https://handyman.dulare.com/git-tips-and-tricks-for-every-day-usage/
 
 
 

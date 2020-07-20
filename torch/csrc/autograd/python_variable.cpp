@@ -420,6 +420,18 @@ PyObject *THPVariable_get_backwards_hooks(THPVariable *self, void *unused)
   END_HANDLE_TH_ERRORS
 }
 
+
+PyObject *THPVariable_get_backwards_pre_hooks(THPVariable *self)
+{
+  HANDLE_TH_ERRORS
+  if (self->backward_pre_hooks) {
+    Py_INCREF(self->backward_pre_hooks);
+    return self->backward_pre_hooks;
+  }
+  Py_RETURN_NONE;
+  END_HANDLE_TH_ERRORS
+}
+
 int THPVariable_set_backwards_hooks(THPVariable *self, PyObject *obj, void *unused)
 {
   HANDLE_TH_ERRORS
@@ -433,6 +445,23 @@ int THPVariable_set_backwards_hooks(THPVariable *self, PyObject *obj, void *unus
   torch::autograd::impl::clear_hooks(self->cdata);
   if (obj) {
     torch::autograd::impl::add_hook(self->cdata, std::make_shared<PyFunctionPreHook>(obj, 0));
+  }
+  return 0;
+  END_HANDLE_TH_ERRORS_RET(-1)
+}
+
+int THPVariable_set_backwards_pre_hooks(THPVariable *self, PyObject *obj)
+{
+  HANDLE_TH_ERRORS
+  if (obj == Py_None) {
+    obj = nullptr;
+  }
+  Py_XINCREF(obj);
+  Py_XDECREF(self->backward_pre_hooks);
+  self->backward_pre_hooks = obj;
+  self->cdata.clear_hooks();
+  if (obj) {
+    self->cdata.add_hook(std::make_shared<PyFunctionPreHook>(obj, 0));
   }
   return 0;
   END_HANDLE_TH_ERRORS_RET(-1)
@@ -551,6 +580,7 @@ static struct PyGetSetDef THPVariable_properties[] = {
   {"output_nr", (getter)THPVariable_get_output_nr, nullptr, nullptr, nullptr},
   {"requires_grad", (getter)THPVariable_get_requires_grad, (setter)THPVariable_set_requires_grad, nullptr, nullptr},
   {"_backward_hooks", (getter)THPVariable_get_backwards_hooks, (setter)THPVariable_set_backwards_hooks, nullptr, nullptr},
+  {"_backward_pre_hooks", (getter)THPVariable_get_backwards_pre_hooks, (setter)THPVariable_set_backwards_pre_hooks, nullptr, nullptr},
   {"name", (getter)THPVariable_get_name, nullptr, nullptr, nullptr},
   {"shape", (getter)THPVariable_get_shape, nullptr, nullptr, nullptr},
   {"is_cuda", (getter)THPVariable_is_cuda, nullptr, nullptr, nullptr},

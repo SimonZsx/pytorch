@@ -56,29 +56,29 @@ Variable SavedVariable::unpack(std::shared_ptr<Node> saved_for) const {
     grad_fn = std::move(saved_for);
   }
 
-  if (saved_version_ != version_counter_.current_version()) {
-    std::stringstream message;
-    message << "one of the variables needed for gradient computation has been "
-        "modified by an inplace operation: [" << data_.toString() << " "
-        << data_.sizes() << "]";
-    if (grad_fn) {
-        message << ", which is output " << output_nr_
-            << " of " << grad_fn->name() << ",";
-    }
-    message << " is at version " << version_counter_.current_version()
-        << "; expected version " << saved_version_ << " instead.";
-    if (!AnomalyMode::is_enabled()) {
-        message << " Hint: enable anomaly detection to find the operation "
-            "that failed to compute its gradient, with torch.autograd."
-            "set_detect_anomaly(True).";
-    }
-    else {
-        message << " Hint: the backtrace further above shows the operation "
-            "that failed to compute its gradient. The variable in question "
-            "was changed in there or anywhere later. Good luck!";
-    }
-    throw std::runtime_error(message.str());
-  }
+  // if (saved_version_ != version_counter_.current_version()) {
+  //   std::stringstream message;
+  //   message << "one of the variables needed for gradient computation has been "
+  //       "modified by an inplace operation: [" << data_.toString() << " "
+  //       << data_.sizes() << "]";
+  //   if (grad_fn) {
+  //       message << ", which is output " << output_nr_
+  //           << " of " << grad_fn->name() << ",";
+  //   }
+  //   message << " is at version " << version_counter_.current_version()
+  //       << "; expected version " << saved_version_ << " instead.";
+  //   if (!AnomalyMode::is_enabled()) {
+  //       message << " Hint: enable anomaly detection to find the operation "
+  //           "that failed to compute its gradient, with torch.autograd."
+  //           "set_detect_anomaly(True).";
+  //   }
+  //   else {
+  //       message << " Hint: the backtrace further above shows the operation "
+  //           "that failed to compute its gradient. The variable in question "
+  //           "was changed in there or anywhere later. Good luck!";
+  //   }
+  //   throw std::runtime_error(message.str());
+  // }
 
   // NB: saved views are unpacked as normal Variables (not views) even though
   // they still share the same storage. This works only because we never call

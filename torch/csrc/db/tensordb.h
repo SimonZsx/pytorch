@@ -13,7 +13,6 @@
 #include <mutex>
 
 
-
 #include <ATen/TypeDefault.h>
 #include <torch/library.h>
 
@@ -21,9 +20,9 @@
 
 #include "torch/csrc/autograd/saved_variable.h"
 
-
 using namespace at;
 using namespace torch::autograd;
+using namespace std;
 //using namespace torch::autograd::generated;
 
 
@@ -40,10 +39,18 @@ class TensorDatabase{
         std::map<int, std::shared_ptr<Node>> tensormap; 
         //std::map<std::shared_ptr<Node>, std::vector<SavedVariable>> activations;
 
+
+       // std::map vector<std::shared_ptr<Node>>;
         std::vector<std::future<void>> pending_futures;
 
         //indicate whether a tensor should be swapped out.
         std::vector<int> flags;
+
+        map<string, int> swapping_layers; 
+
+
+        int pipeline_id;
+        bool is_forward;
 
 
     public:
@@ -55,11 +62,11 @@ class TensorDatabase{
         TensorDatabase(std::size_t R): dbsize(R){
 
         }
-        int operator()(size_t r, size_t c) const { // member function definition
-            return data[r*dbsize+c];
-        }
-        int& operator()(size_t r, size_t c) {  // another member function definition
-            return data[r*dbsize+c];
+
+        void set_pipeline(int p_id, bool is_f){
+            pipeline_id = p_id;
+            is_forward = is_f;
+
         }
 
         void insert(int i, std::shared_ptr<Node> ptr){

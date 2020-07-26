@@ -100,8 +100,9 @@ for t in range(1):
     gap=end-start
  #   print(gap)
 
+
     start2 = datetime.datetime.now() 
-    loss.backward()
+    ## loss.backward()
     end = datetime.datetime.now()
     gap=end-start2
     print(gap)
@@ -109,7 +110,7 @@ for t in range(1):
     for idx, m in model.named_children(): #enumerate(model.modules()):
         #print(idx, '->', list(m.parameters()))
         for p in m.parameters():
-            print(p.grad_fn)
+            print(p.get_device())
     optimizer.step()
 
 print(torch.cuda.get_tensor_db().decode("utf-8") )
